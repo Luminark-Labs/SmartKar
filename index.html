@@ -15,7 +15,7 @@
 
         function connectToServer() {
             const ipAddress = document.getElementById('ipInput').value;
-            socket = io.connect(`http://${ipAddress}:5000`);
+            socket = io.connect(`http://${ipAddress}:8000`);
 
             // Handle connection event
             socket.on('connect', () => {
@@ -28,6 +28,8 @@
             });
 
             // Access the camera
+
+            
             navigator.mediaDevices.getUserMedia({ video: true })
                 .then((stream) => {
                     const video = document.createElement('video');
