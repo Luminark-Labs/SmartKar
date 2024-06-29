@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Socket.IO Example</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.1/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <label for="ipInput">Enter IP Address:</label>
+    <input type="text" id="ipInput">
+    <button onclick="connectToServer()">Connect</button>
+
+    <script>
+        let socket;
+
+        function connectToServer() {
+            const ipAddress = document.getElementById('ipInput').value;
+            socket = io.connect(`http://${ipAddress}:5000`);
+
+            // Handle connection event
+            socket.on('connect', () => {
+                console.log('Connected to Socket.IO server');
+            });
+
+            // Handle disconnection event
+            socket.on('disconnect', () => {
+                console.log('Disconnected from Socket.IO server');
+            });
+
+            // Access the camera
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then((stream) => {
+                    const video = document.createElement('video');
+                    video.srcObject = stream;
+                    document.body.appendChild(video);
+                    video.play();
+
+                    // Capture frames from the video stream
+                    const canvas = document.createElement('canvas');
+                    const context = canvas.getContext('2d');
+                    setInterval(() => {
+                        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                        const base64Data = canvas.toDataURL('image/jpeg');
+                        socket.emit('frame', base64Data);
+                    }, 1000 / 5); // Capture frames at 30 frames per second
+                })
+                .catch((error) => {
+                    console.error('Error accessing camera:', error);
+                });
+        }
+    </script>
+</body>
+</html>
