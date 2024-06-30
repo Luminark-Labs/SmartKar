@@ -1,5 +1,7 @@
 # 🚗 SmartKar
 
+While the readme does provide a good basic description of this project, check out the  [In-Depth Explanation!](https://docs.google.com/document/d/1A13XkpGnv0fUH5_Wj75YutoL2hrhBT474YjkTdbI2ko/edit?usp=sharing) For more information! (please check it out it took so long 😭)
+
 SmartKar is a mobile application that notifies drivers when traffic lights turn green, inspired by Tesla's feature. This project aims to enhance driving experience and safety by reducing distraction and improving traffic flow.
 
 ## Motivation 💪
