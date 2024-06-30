@@ -6,7 +6,7 @@ SmartKar is a mobile application that notifies drivers when traffic lights turn 
 
 ## Motivation 💪
 
-Essentially, in the newer model teslas, when stopped at a light, And the light changes color, the car notifies the driver with a comforting chime, However, unfortunatly, I do not drive a tesla, but I would still love this feature in my car!
+SmartKar is a project that aims to replicate Tesla's chime on green feature that has recently been added! If you are not familiar with what this feature is, here is an example of Chima on green working in real time.
 [Demo](https://www.youtube.com/shorts/g8TijB9DVPg)
 
 ## Features ❓❗
