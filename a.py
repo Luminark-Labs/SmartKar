@@ -28,7 +28,7 @@ model = model.to(device)
 # Then you can use model for prediction or further training.
 input("model loaded, ender tonie")
 # Load Image
-img_path = 'raw.jpeg'
+img_path = '8281.png'
 img = Image.open(img_path)
 
 # Define your transforms - Please replace it based on how you transformed during training
