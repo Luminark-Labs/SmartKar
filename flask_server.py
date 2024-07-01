@@ -71,6 +71,15 @@ def handle_frame(data):
     Returns:
         None
     """
+    #convert the binary data into an image, assign it with a random ID,
+    #send to the ai, get the bounding boxes,
+
+    #first of all, the boxes are not always going to be exactly the same
+
+
+    #cross check it with the previous locations to figure out if a chime is neccesary, (neccesary means if a light has turned from red to green)
+
+
     print('Received frame')
     # Save the base64 data as an image file
     print(data)

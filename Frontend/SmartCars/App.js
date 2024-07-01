@@ -50,7 +50,10 @@ export default function App() {
   // Function to capture a frame from the camera and send it via socket
   const captureFrame = async () => {
     if (cameraRef.current) {
-      const photo = await cameraRef.current.takePictureAsync({ base64: false });
+      const photo = await cameraRef.current.takePictureAsync({
+        quality: 0.1,
+         
+        });
       const response = await fetch(photo.uri);
       const blob = await response.blob();
       console.log("Blob length:", blob.size);
