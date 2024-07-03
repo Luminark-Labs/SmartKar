@@ -1,30 +1,35 @@
+import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useState, useRef, useEffect } from 'react';
-import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import io from "socket.io-client";
+import { Audio } from 'expo-av';
 
-// Socket endpoint - replace with your server's IP and port
+//when i get to it, function is just     playSound();
+
 const socketEndpoint = "http://100.73.7.50:8000";
 
 export default function App() {
-  
-  // State for camera facing direction
   const [facing, setFacing] = useState('back');
-  // Camera permission state
   const [permission, requestPermission] = useCameraPermissions();
-  // Refs for socket and camera
   const socketRef = useRef(null);
   const cameraRef = useRef(null);
-  // State to track socket connection status
   const [hasConnection, setConnection] = useState(false);
+  const [sound, setSound] = useState();
 
-  // Effect to set up a loop for capturing frames every 2 seconds
   useEffect(() => {
+    configureAudio();
     const intervalId = setInterval(captureFrame, 2000);
     return () => clearInterval(intervalId);
   }, []);
-  
-  // Effect to initialize socket connection and set up event listeners
+
+  async function configureAudio() {
+    await Audio.setAudioModeAsync({
+      playsInSilentModeIOS: true,
+      staysActiveInBackground: true,
+      shouldDuckAndroid: true,
+    });
+  }
+
   useEffect(function didMount() {
     const socket = io(socketEndpoint, {
       transports: ["websocket"],
@@ -32,42 +37,35 @@ export default function App() {
 
     socketRef.current = socket;
 
-    // Event listeners for socket connection status
     socket.io.on("open", () => setConnection(true));
     socket.io.on("close", () => setConnection(false));
-    // Initial connection message listener
     socket.on("message", (data) => {
       console.log(data);
     });
 
-    // Cleanup function to disconnect socket and remove listeners
     return function didUnmount() {
       socket.disconnect();
       socket.removeAllListeners();
     };
   }, []);
 
-  // Function to capture a frame from the camera and send it via socket
   const captureFrame = async () => {
     if (cameraRef.current) {
       const photo = await cameraRef.current.takePictureAsync({
-        quality: 0.1,
-         
-        });
+        quality: 0.13,
+        ImageType: "jpg",
+      });
       const response = await fetch(photo.uri);
       const blob = await response.blob();
       console.log("Blob length:", blob.size);
-      console.log("image rec");
       socketRef.current.emit("message", blob);
     }
   };
 
-  // Render nothing if permission state is not determined
   if (!permission) {
     return <View />;
   }
 
-  // Render permission request view if camera access is not granted
   if (!permission.granted) {
     return (
       <View style={styles.container}>
@@ -77,12 +75,21 @@ export default function App() {
     );
   }
 
-  // Function to toggle camera facing direction
   function toggleCameraFacing() {
     setFacing(current => (current === 'back' ? 'front' : 'back'));
   }
 
-  // Main component render function
+  async function playSound() {
+    console.log("Loading Sound");
+    const { sound } = await Audio.Sound.createAsync(
+      require('./assets/chime.mp3'),
+      { shouldPlay: true }
+    );
+    setSound(sound);
+    console.log("Playing Sound");
+    await sound.playAsync();
+  }
+
   return (
     <View style={styles.container}>
       <CameraView 
