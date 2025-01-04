@@ -84,19 +84,25 @@ def ProcessLightInfo(centers, colors):
                 'position': center,
                 'color': color,
                 'last_seen': timestamp,
-                'history': [(center, color)]
+                'history': [(center, color)],
+                'previousColor': color,
             }
     else:
         for center, color in zip(centers, colors):
             light_found = False
             for light_id in list(lights.keys()):
                 if IsSameCenters([lights[light_id]['position']], [center]):
+                    
                     lights[light_id]['color'] = color
                     lights[light_id]['last_seen'] = timestamp
                     lights[light_id]['history'].append((center, color))
                     light_found = True
                     if check_light(light_id):
                         print("play chime")
+                    if lights[light_id]['previousColor'] == 'red' and 'color' == 'green':
+                        print("play chime")
+                    lights[light_id]['previous_color'] = color
+
                     break
             
             if not light_found:
@@ -105,7 +111,8 @@ def ProcessLightInfo(centers, colors):
                     'position': center,
                     'color': color,
                     'last_seen': timestamp,
-                    'history': [(center, color)]
+                    'history': [(center, color)],
+                    'previous_color': None
                 }
 
     # Uncomment this part if you want to remove lights not seen for more than 5 seconds
@@ -163,7 +170,7 @@ def RunImageThroughModel(img_path):
         }
         return ToSendInfo
 
-def ProccessImage(img_path):
+def ProcessImage(img_path):
     Data = RunImageThroughModel(img_path)
     ProcessLightInfo(Data['centers'], Data['labels'])
     return Data
@@ -188,7 +195,7 @@ def handle_message(data):
     random_id = uuid.uuid4()
     with open(f'./temp/{random_id}.jpg', 'wb') as f:
         f.write(data)    
-    gr = ProccessImage(f'./temp/{random_id}.jpg')
+    gr = ProcessImage(f'./temp/{random_id}.jpg')
     print(gr)
     
     emit('boxdrawing', gr   )
